@@ -1,52 +1,46 @@
 package com.bridgelabz.quantitymeasurement;
 
 public class QuantityMeasurementApp {
+    public static class QuantityLength {
+        public enum LengthUnit {
+            FEET(1.0), INCHES(1.0 / 12.0);
 
-    public static class Feet {
+            private final double feetPerUnit;
+
+            LengthUnit(double feetPerUnit) {
+                this.feetPerUnit = feetPerUnit;
+            }
+
+            public double getFeetPerUnit() { return feetPerUnit; }
+        }
+
         private final double value;
+        private final LengthUnit unit;
 
-        public Feet(double value) {
+        public QuantityLength(double value, LengthUnit unit) {
+            if (unit == null) throw new IllegalArgumentException("Unit is required");
+            if (!Double.isFinite(value)) throw new IllegalArgumentException("Value must be finite");
             this.value = value;
+            this.unit = unit;
         }
 
         @Override
         public boolean equals(Object other) {
             if (this == other) return true;
-            if (!(other instanceof Feet feet)) return false;
-            return Double.compare(value, feet.value) == 0;
+            if (!(other instanceof QuantityLength length)) return false;
+            return Double.compare(value * unit.getFeetPerUnit(),
+                    length.value * length.unit.getFeetPerUnit()) == 0;
         }
 
         @Override
         public int hashCode() {
-            return Double.hashCode(value);
-        }
-    }
-
-    public static class Inches {
-        private final double value;
-
-        public Inches(double value) {
-            this.value = value;
-        }
-
-        @Override
-        public boolean equals(Object other) {
-            if (this == other) return true;
-            if (!(other instanceof Inches inches)) return false;
-            return Double.compare(value, inches.value) == 0;
-        }
-
-        @Override
-        public int hashCode() {
-            return Double.hashCode(value);
+            return Double.hashCode(value * unit.getFeetPerUnit());
         }
     }
 
     public static void main(String[] args) {
-        Feet first = new Feet(1.0);
-        Feet second = new Feet(1.0);
-        System.out.println("1.0 ft equals 1.0 ft: " + first.equals(second));
-        System.out.println("12.0 in equals 12.0 in: "
-                + new Inches(12.0).equals(new Inches(12.0)));
+        QuantityLength foot = new QuantityLength(1, QuantityLength.LengthUnit.FEET);
+        QuantityLength inches = new QuantityLength(12, QuantityLength.LengthUnit.INCHES);
+        System.out.println("1 foot equals 12 inches: " + foot.equals(inches));
     }
 }
