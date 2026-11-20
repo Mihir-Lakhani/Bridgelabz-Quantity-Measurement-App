@@ -24,6 +24,11 @@ public class QuantityMeasurementApp {
             this.unit = unit;
         }
 
+        public double convertTo(LengthUnit targetUnit) {
+            if (targetUnit == null) throw new IllegalArgumentException("Target unit is required");
+            return value * unit.getFeetPerUnit() / targetUnit.getFeetPerUnit();
+        }
+
         @Override
         public boolean equals(Object other) {
             if (this == other) return true;
