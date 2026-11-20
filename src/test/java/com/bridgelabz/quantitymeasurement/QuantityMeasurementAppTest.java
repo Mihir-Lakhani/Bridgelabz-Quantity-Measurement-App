@@ -7,6 +7,14 @@ import static org.junit.jupiter.api.Assertions.*;
 class QuantityMeasurementAppTest {
 
     @Test
+    void inchesAreComparedSeparatelyFromFeet() {
+        QuantityMeasurementApp.Inches inches = new QuantityMeasurementApp.Inches(12.0);
+        assertEquals(inches, new QuantityMeasurementApp.Inches(12.0));
+        assertNotEquals(inches, new QuantityMeasurementApp.Inches(6.0));
+        assertNotEquals(inches, new QuantityMeasurementApp.Feet(12.0));
+    }
+
+    @Test
     void equalFeetHaveEqualValuesAndHashCodes() {
         QuantityMeasurementApp.Feet first = new QuantityMeasurementApp.Feet(1.0);
         QuantityMeasurementApp.Feet second = new QuantityMeasurementApp.Feet(1.0);
