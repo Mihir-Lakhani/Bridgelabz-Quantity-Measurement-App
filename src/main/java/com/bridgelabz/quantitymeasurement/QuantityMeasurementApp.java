@@ -3,7 +3,7 @@ package com.bridgelabz.quantitymeasurement;
 public class QuantityMeasurementApp {
     public static class QuantityLength {
         public enum LengthUnit {
-            FEET(1.0), INCHES(1.0 / 12.0);
+            FEET(1.0), INCHES(1.0 / 12.0), YARDS(3.0), CENTIMETERS(1.0 / 30.48);
 
             private final double feetPerUnit;
 

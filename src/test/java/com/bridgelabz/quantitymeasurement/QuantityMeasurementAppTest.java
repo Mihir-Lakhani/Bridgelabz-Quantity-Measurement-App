@@ -8,6 +8,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class QuantityMeasurementAppTest {
     @Test
+    void comparesYardsAndCentimeters() {
+        assertEquals(new QuantityLength(1, YARDS), new QuantityLength(3, FEET));
+        assertEquals(new QuantityLength(30.48, CENTIMETERS), new QuantityLength(1, FEET));
+    }
+
+    @Test
     void comparesFeetAndInches() {
         QuantityLength foot = new QuantityLength(1, FEET);
         QuantityLength inches = new QuantityLength(12, INCHES);
