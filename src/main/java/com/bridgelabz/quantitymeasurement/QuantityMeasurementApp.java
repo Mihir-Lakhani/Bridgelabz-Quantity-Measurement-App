@@ -34,6 +34,12 @@ public class QuantityMeasurementApp {
             return new QuantityLength(value + other.convertTo(unit), unit);
         }
 
+        public QuantityLength add(QuantityLength other, LengthUnit targetUnit) {
+            if (other == null) throw new IllegalArgumentException("Other length is required");
+            if (targetUnit == null) throw new IllegalArgumentException("Target unit is required");
+            return new QuantityLength(convertTo(targetUnit) + other.convertTo(targetUnit), targetUnit);
+        }
+
         public double getValue() { return value; }
         public LengthUnit getUnit() { return unit; }
 
