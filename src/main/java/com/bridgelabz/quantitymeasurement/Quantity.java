@@ -33,6 +33,7 @@ public class Quantity<U extends Enum<U> & IMeasurable> {
 
     private double calculate(Quantity<U> other, U targetUnit, char operation) {
         if (other == null || targetUnit == null) throw new IllegalArgumentException("Other quantity and target unit required");
+        unit.validateOperationSupport(operation);
         double left = convertTo(targetUnit);
         double right = other.convertTo(targetUnit);
         return switch (operation) {
@@ -53,10 +54,10 @@ public class Quantity<U extends Enum<U> & IMeasurable> {
     public boolean equals(Object other) {
         if (this == other) return true;
         if (!(other instanceof Quantity<?> quantity)) return false;
-        return unit.getClass() == quantity.unit.getClass()
+        return unit.getDeclaringClass() == quantity.unit.getDeclaringClass()
                 && Double.compare(unit.toBase(value), quantity.unit.toBase(quantity.value)) == 0;
     }
 
     @Override
-    public int hashCode() { return 31 * unit.getClass().hashCode() + Double.hashCode(unit.toBase(value)); }
+    public int hashCode() { return 31 * unit.getDeclaringClass().hashCode() + Double.hashCode(unit.toBase(value)); }
 }
