@@ -4,6 +4,10 @@ A Java quantity measurement application built one use case at a time from the Br
 
 The `main` branch contains this README. Development starts on `develop`; each use case is implemented in its own `feature/uc-N-*` branch and merged into `develop` with a non fast forward commit.
 
+The feature branches show the code as it grew through UC1–UC17. The latest
+`develop` branch uses Spring Data JPA directly. Earlier cache and JDBC versions
+remain available in their UC15 and UC16 branches.
+
 ## Run the current application
 
 Check out `develop` and run `mvn spring-boot:run` with Java 21 or newer. The REST API uses an in-memory H2 database for development.
