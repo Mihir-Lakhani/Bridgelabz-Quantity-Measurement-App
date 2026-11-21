@@ -3,7 +3,7 @@ package com.bridgelabz.quantitymeasurement;
 import org.junit.jupiter.api.Test;
 
 import static com.bridgelabz.quantitymeasurement.QuantityMeasurementApp.QuantityLength;
-import static com.bridgelabz.quantitymeasurement.QuantityMeasurementApp.QuantityLength.LengthUnit.*;
+import static com.bridgelabz.quantitymeasurement.LengthUnit.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class QuantityMeasurementAppTest {
