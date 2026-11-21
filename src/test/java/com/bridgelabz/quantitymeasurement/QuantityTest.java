@@ -5,6 +5,16 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class QuantityTest {
     @Test
+    void subtractsAndDividesCompatibleQuantities() {
+        Quantity<LengthUnit> tenFeet = new Quantity<>(10, LengthUnit.FEET);
+        Quantity<LengthUnit> sixInches = new Quantity<>(6, LengthUnit.INCHES);
+        assertEquals(9.5, tenFeet.subtract(sixInches).getValue(), 0.000001);
+        assertEquals(20, tenFeet.divide(sixInches), 0.000001);
+        assertThrows(ArithmeticException.class,
+                () -> tenFeet.divide(new Quantity<>(0, LengthUnit.FEET)));
+    }
+
+    @Test
     void volumeCanBeComparedConvertedAndAdded() {
         Quantity<VolumeUnit> litre = new Quantity<>(1, VolumeUnit.LITRE);
         Quantity<VolumeUnit> millilitres = new Quantity<>(1000, VolumeUnit.MILLILITRE);

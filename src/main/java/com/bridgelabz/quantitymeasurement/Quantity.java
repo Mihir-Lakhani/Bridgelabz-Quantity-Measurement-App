@@ -22,6 +22,20 @@ public class Quantity<U extends Enum<U> & IMeasurable> {
         return new Quantity<>(convertTo(targetUnit) + other.convertTo(targetUnit), targetUnit);
     }
 
+    public Quantity<U> subtract(Quantity<U> other) { return subtract(other, unit); }
+
+    public Quantity<U> subtract(Quantity<U> other, U targetUnit) {
+        if (other == null || targetUnit == null) throw new IllegalArgumentException("Other quantity and target unit required");
+        return new Quantity<>(convertTo(targetUnit) - other.convertTo(targetUnit), targetUnit);
+    }
+
+    public double divide(Quantity<U> other) {
+        if (other == null) throw new IllegalArgumentException("Other quantity required");
+        double divisor = other.convertTo(unit);
+        if (divisor == 0) throw new ArithmeticException("Cannot divide by zero");
+        return value / divisor;
+    }
+
     public double getValue() { return value; }
     public U getUnit() { return unit; }
 
