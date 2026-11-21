@@ -5,6 +5,15 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class QuantityTest {
     @Test
+    void volumeCanBeComparedConvertedAndAdded() {
+        Quantity<VolumeUnit> litre = new Quantity<>(1, VolumeUnit.LITRE);
+        Quantity<VolumeUnit> millilitres = new Quantity<>(1000, VolumeUnit.MILLILITRE);
+        assertEquals(litre, millilitres);
+        assertEquals(2, litre.add(millilitres).getValue(), 0.000001);
+        assertEquals(3.78541, new Quantity<>(1, VolumeUnit.GALLON).convertTo(VolumeUnit.LITRE), 0.000001);
+    }
+
+    @Test
     void lengthCanBeComparedConvertedAndAdded() {
         Quantity<LengthUnit> foot = new Quantity<>(1, LengthUnit.FEET);
         Quantity<LengthUnit> inches = new Quantity<>(12, LengthUnit.INCHES);
