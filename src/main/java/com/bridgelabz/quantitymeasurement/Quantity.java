@@ -18,22 +18,32 @@ public class Quantity<U extends Enum<U> & IMeasurable> {
     public Quantity<U> add(Quantity<U> other) { return add(other, unit); }
 
     public Quantity<U> add(Quantity<U> other, U targetUnit) {
-        if (other == null || targetUnit == null) throw new IllegalArgumentException("Other quantity and target unit required");
-        return new Quantity<>(convertTo(targetUnit) + other.convertTo(targetUnit), targetUnit);
+        return new Quantity<>(calculate(other, targetUnit, '+'), targetUnit);
     }
 
     public Quantity<U> subtract(Quantity<U> other) { return subtract(other, unit); }
 
     public Quantity<U> subtract(Quantity<U> other, U targetUnit) {
-        if (other == null || targetUnit == null) throw new IllegalArgumentException("Other quantity and target unit required");
-        return new Quantity<>(convertTo(targetUnit) - other.convertTo(targetUnit), targetUnit);
+        return new Quantity<>(calculate(other, targetUnit, '-'), targetUnit);
     }
 
     public double divide(Quantity<U> other) {
-        if (other == null) throw new IllegalArgumentException("Other quantity required");
-        double divisor = other.convertTo(unit);
-        if (divisor == 0) throw new ArithmeticException("Cannot divide by zero");
-        return value / divisor;
+        return calculate(other, unit, '/');
+    }
+
+    private double calculate(Quantity<U> other, U targetUnit, char operation) {
+        if (other == null || targetUnit == null) throw new IllegalArgumentException("Other quantity and target unit required");
+        double left = convertTo(targetUnit);
+        double right = other.convertTo(targetUnit);
+        return switch (operation) {
+            case '+' -> left + right;
+            case '-' -> left - right;
+            case '/' -> {
+                if (right == 0) throw new ArithmeticException("Cannot divide by zero");
+                yield left / right;
+            }
+            default -> throw new IllegalArgumentException("Unsupported operation");
+        };
     }
 
     public double getValue() { return value; }
