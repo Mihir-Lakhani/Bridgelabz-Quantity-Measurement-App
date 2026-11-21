@@ -29,6 +29,14 @@ public class QuantityMeasurementApp {
             return value * unit.getFeetPerUnit() / targetUnit.getFeetPerUnit();
         }
 
+        public QuantityLength add(QuantityLength other) {
+            if (other == null) throw new IllegalArgumentException("Other length is required");
+            return new QuantityLength(value + other.convertTo(unit), unit);
+        }
+
+        public double getValue() { return value; }
+        public LengthUnit getUnit() { return unit; }
+
         @Override
         public boolean equals(Object other) {
             if (this == other) return true;
