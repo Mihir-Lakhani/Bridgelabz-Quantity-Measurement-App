@@ -5,7 +5,9 @@ import com.bridgelabz.quantitymeasurement.Quantity;
 import com.bridgelabz.quantitymeasurement.model.MeasurementRecord;
 import com.bridgelabz.quantitymeasurement.repository.MeasurementRepository;
 import java.util.List;
+import org.springframework.stereotype.Service;
 
+@Service
 public class QuantityMeasurementService {
     private final MeasurementRepository repository;
 
@@ -30,4 +32,18 @@ public class QuantityMeasurementService {
     }
 
     public List<MeasurementRecord> history() { return repository.findAll(); }
+
+    public void recordError(String unit) { repository.save("ERROR", 0, unit == null ? "UNKNOWN" : unit); }
+
+    public <U extends Enum<U> & IMeasurable> Quantity<U> subtract(Quantity<U> first, Quantity<U> second, U target) {
+        Quantity<U> result = first.subtract(second, target);
+        repository.save("SUBTRACT", result.getValue(), target.name());
+        return result;
+    }
+
+    public <U extends Enum<U> & IMeasurable> double divide(Quantity<U> first, Quantity<U> second) {
+        double result = first.divide(second);
+        repository.save("DIVIDE", result, first.getUnit().name());
+        return result;
+    }
 }
