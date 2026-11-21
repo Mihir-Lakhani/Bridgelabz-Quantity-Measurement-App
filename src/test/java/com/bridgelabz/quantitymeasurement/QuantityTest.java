@@ -5,6 +5,16 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class QuantityTest {
     @Test
+    void convertsTemperatureButRejectsAbsoluteTemperatureArithmetic() {
+        Quantity<TemperatureUnit> freezingC = new Quantity<>(0, TemperatureUnit.CELSIUS);
+        Quantity<TemperatureUnit> freezingF = new Quantity<>(32, TemperatureUnit.FAHRENHEIT);
+        assertEquals(freezingC, freezingF);
+        assertEquals(32, freezingC.convertTo(TemperatureUnit.FAHRENHEIT), 0.000001);
+        assertThrows(UnsupportedOperationException.class, () -> freezingC.add(freezingF));
+        assertThrows(UnsupportedOperationException.class, () -> freezingC.divide(freezingF));
+    }
+
+    @Test
     void subtractsAndDividesCompatibleQuantities() {
         Quantity<LengthUnit> tenFeet = new Quantity<>(10, LengthUnit.FEET);
         Quantity<LengthUnit> sixInches = new Quantity<>(6, LengthUnit.INCHES);
