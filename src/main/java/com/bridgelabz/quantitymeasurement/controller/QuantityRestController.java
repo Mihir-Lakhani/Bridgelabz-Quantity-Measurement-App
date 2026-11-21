@@ -21,10 +21,22 @@ public class QuantityRestController {
     public Object calculate(@PathVariable String operation, @Valid @RequestBody OperationRequest request) {
         try {
             return switch (request.category().toUpperCase(Locale.ROOT)) {
-                case "LENGTH" -> calculateForUnit(operation, request, LengthUnit.class);
-                case "WEIGHT" -> calculateForUnit(operation, request, WeightUnit.class);
-                case "VOLUME" -> calculateForUnit(operation, request, VolumeUnit.class);
-                case "TEMPERATURE" -> calculateForUnit(operation, request, TemperatureUnit.class);
+                case "LENGTH" -> calculateForUnit(operation, request,
+                        LengthUnit.valueOf(request.firstUnit().toUpperCase(Locale.ROOT)),
+                        request.secondUnit() == null ? null : LengthUnit.valueOf(request.secondUnit().toUpperCase(Locale.ROOT)),
+                        request.targetUnit() == null ? null : LengthUnit.valueOf(request.targetUnit().toUpperCase(Locale.ROOT)));
+                case "WEIGHT" -> calculateForUnit(operation, request,
+                        WeightUnit.valueOf(request.firstUnit().toUpperCase(Locale.ROOT)),
+                        request.secondUnit() == null ? null : WeightUnit.valueOf(request.secondUnit().toUpperCase(Locale.ROOT)),
+                        request.targetUnit() == null ? null : WeightUnit.valueOf(request.targetUnit().toUpperCase(Locale.ROOT)));
+                case "VOLUME" -> calculateForUnit(operation, request,
+                        VolumeUnit.valueOf(request.firstUnit().toUpperCase(Locale.ROOT)),
+                        request.secondUnit() == null ? null : VolumeUnit.valueOf(request.secondUnit().toUpperCase(Locale.ROOT)),
+                        request.targetUnit() == null ? null : VolumeUnit.valueOf(request.targetUnit().toUpperCase(Locale.ROOT)));
+                case "TEMPERATURE" -> calculateForUnit(operation, request,
+                        TemperatureUnit.valueOf(request.firstUnit().toUpperCase(Locale.ROOT)),
+                        request.secondUnit() == null ? null : TemperatureUnit.valueOf(request.secondUnit().toUpperCase(Locale.ROOT)),
+                        request.targetUnit() == null ? null : TemperatureUnit.valueOf(request.targetUnit().toUpperCase(Locale.ROOT)));
                 default -> throw new IllegalArgumentException("Unknown category: " + request.category());
             };
         } catch (IllegalArgumentException | ArithmeticException | UnsupportedOperationException error) {
@@ -34,11 +46,9 @@ public class QuantityRestController {
     }
 
     private <U extends Enum<U> & IMeasurable> Object calculateForUnit(
-            String operation, OperationRequest request, Class<U> unitType) {
-        U firstUnit = Enum.valueOf(unitType, request.firstUnit().toUpperCase(Locale.ROOT));
+            String operation, OperationRequest request, U firstUnit, U secondUnit, U targetUnit) {
         Quantity<U> first = new Quantity<>(request.firstValue(), firstUnit);
-        U target = request.targetUnit() == null ? firstUnit
-                : Enum.valueOf(unitType, request.targetUnit().toUpperCase(Locale.ROOT));
+        U target = targetUnit == null ? firstUnit : targetUnit;
 
         if (operation.equals("convert")) {
             return Map.of("result", service.convert(first, target), "unit", target.name());
@@ -47,7 +57,6 @@ public class QuantityRestController {
         if (request.secondValue() == null || request.secondUnit() == null) {
             throw new IllegalArgumentException("Second value and unit are required");
         }
-        U secondUnit = Enum.valueOf(unitType, request.secondUnit().toUpperCase(Locale.ROOT));
         Quantity<U> second = new Quantity<>(request.secondValue(), secondUnit);
 
         return switch (operation) {
@@ -75,18 +84,13 @@ public class QuantityRestController {
 
     @GetMapping("/history/type/{type}")
     public List<MeasurementRecord> historyByType(@PathVariable String type) {
-        Class<? extends Enum<?>> unitType = switch (type.toUpperCase(Locale.ROOT)) {
-            case "LENGTH" -> LengthUnit.class;
-            case "WEIGHT" -> WeightUnit.class;
-            case "VOLUME" -> VolumeUnit.class;
-            case "TEMPERATURE" -> TemperatureUnit.class;
+        List<String> units = switch (type.toUpperCase(Locale.ROOT)) {
+            case "LENGTH" -> java.util.Arrays.stream(LengthUnit.values()).map(Enum::name).toList();
+            case "WEIGHT" -> java.util.Arrays.stream(WeightUnit.values()).map(Enum::name).toList();
+            case "VOLUME" -> java.util.Arrays.stream(VolumeUnit.values()).map(Enum::name).toList();
+            case "TEMPERATURE" -> java.util.Arrays.stream(TemperatureUnit.values()).map(Enum::name).toList();
             default -> throw new IllegalArgumentException("Unknown category: " + type);
         };
-        return service.history().stream().filter(record -> {
-            for (Object unit : unitType.getEnumConstants()) {
-                if (((Enum<?>) unit).name().equals(record.unit())) return true;
-            }
-            return false;
-        }).toList();
+        return service.history().stream().filter(record -> units.contains(record.unit())).toList();
     }
 }
